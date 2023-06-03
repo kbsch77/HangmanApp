@@ -4,19 +4,18 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.RotateAnimation
 import android.widget.EditText
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.graphics.vector.VectorProperty
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.util.Collections
 import java.util.Scanner
 
 class MainActivity : ComponentActivity() {
@@ -117,7 +116,7 @@ class MainActivity : ComponentActivity() {
         // if the letter that was tried is new
         if (lettersTried.indexOf(letter) < 0){
             lettersTried += "$letter, "
-            var messageToBeDisplayed = MESSAGE_WITH_LETTERS_TRIED + lettersTried
+            val messageToBeDisplayed = MESSAGE_WITH_LETTERS_TRIED + lettersTried
             txtLettersTried.text = messageToBeDisplayed
         }
     }
@@ -133,7 +132,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun initializeGame() {
+    @Preview(showBackground = true)
+    @Composable
+    private fun InitializeGame() {
         // 1.WORD
         // Shuffle array list and get first element, and then remove it
         myListOfWords.shuffle()
@@ -172,55 +173,49 @@ class MainActivity : ComponentActivity() {
         txtTriesLeft.text = triesLeft
     }
 
-    private fun resetGame(v: View){
+    @Composable
+    private fun ResetGame(v: View){
         // start and clear animation
         trReset.startAnimation(rotateAnimation)
         trTriesLeft.clearAnimation()
 
         // setup a new game
-        initializeGame()
+        InitializeGame()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        scaleAndRotateAnimation.fillAfter = true
+        setContent {
 
-        //for debugging
-//        var testerWord = ""
+            scaleAndRotateAnimation.fillAfter = true
 
-        // traverse database file and populate array list
-        var myInputStream: InputStream? = null
-        var scannerVariable: Scanner? = null
-        try {
-            var myInputStream: InputStream = File ("database_file.txt").inputStream()
-            var scannerVariable = Scanner(myInputStream)
-            while (scannerVariable.hasNext()){
-//                testerWord = scannerVariable.next()
-//                myListOfWords.add(testerWord)
-                myListOfWords.add(scannerVariable.next())
-//                Toast.makeText(this@MainActivity, testerWord, Toast.LENGTH_SHORT).show()
-            }
-
-        } catch (e: IOException){
-            Toast.makeText(this@MainActivity, e.javaClass.simpleName + ": " + e.message, Toast.LENGTH_SHORT).show()
-        }
-        finally {
-            // close scanner
-            if (scannerVariable != null)
-                scannerVariable.close()
-            // close InputStream
+            // traverse database file and populate array list
+            val myInputStream: InputStream = File("database_file.txt").inputStream()
+            var scannerVariable: Scanner? = null
             try {
-                if (myInputStream != null)
-                    myInputStream.close()
-            } catch (e: IOException){
-                Toast.makeText(this@MainActivity, e.javaClass.simpleName + ": " + e.message, Toast.LENGTH_SHORT).show()
-            }
-        }
-        initializeGame()
+                scannerVariable = Scanner(myInputStream)
+                while (scannerVariable.hasNext()) {
+                    myListOfWords.add(scannerVariable.next())
+                }
 
-        // setup the text changed listener for the edit text
-        edtInput.addTextChangedListener(textWatcher)
+            } catch (e: IOException) {
+                Toast.makeText(this@MainActivity, e.javaClass.simpleName + ": " + e.message, Toast.LENGTH_SHORT).show()
+            } finally {
+                // close scanner
+                scannerVariable?.close()
+                // close InputStream
+                try {
+                    myInputStream.close()
+                } catch (e: IOException) {
+                    Toast.makeText(this@MainActivity, e.javaClass.simpleName + ": " + e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+            InitializeGame()
+
+            // setup the text changed listener for the edit text
+            edtInput.addTextChangedListener(textWatcher)
+        }
     }
 }

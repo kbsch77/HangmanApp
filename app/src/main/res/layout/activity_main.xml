@@ -106,7 +106,7 @@
             android:textSize="@dimen/btnReset"
             android:id="@+id/btnReset"
             android:text="@string/reset"
-            android:onClick="resetGame"
+            android:onClick="ResetGame"
             android:layout_column="0"/>
     </TableRow>
 </TableLayout>
