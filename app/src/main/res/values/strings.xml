@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Hangman App</string>
+    <string name="input_one_letter">Input one letter</string>
+    <string name="hangman">Hangman</string>
+    <string name="my_word">My word</string>
+    <string name="letters_tried">Letters tried:</string>
+    <string name="x_x_x_x_x_x">X X X X X X</string>
+    <string name="reset">Reset</string>
+</resources>
